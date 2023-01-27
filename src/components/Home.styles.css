@@ -1,0 +1,7 @@
+.allItems {
+  transition: 0.5s all;
+}
+.left {
+  height: 85vh;
+  overflow: auto;
+}

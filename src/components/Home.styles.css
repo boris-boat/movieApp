@@ -1,7 +1,23 @@
 .allItems {
-  transition: 0.5s all;
+  transition: 0.5s linear;
 }
 .left {
   height: 85vh;
   overflow: auto;
+}
+
+@media screen and (max-width: 580px) {
+  .moviesWrapper {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .singleItemWrapper {
+    height: auto !important;
+  }
+  .singleMovie {
+    height: auto;
+  }
+  .singleMovie > .movie {
+    height: auto;
+  }
 }

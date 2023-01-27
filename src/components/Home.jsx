@@ -25,9 +25,14 @@ const Home = () => {
   return (
     <Container fluid>
       <Row className="d-flex justify-content-center align-items-center flex-row mt-5">
-        <Col lg="6" xs="10">
+        <Col
+          lg="10"
+          xs="12"
+          className="d-flex justify-content-center align-items-center flex-row"
+        >
           {" "}
-          <form className="d-flex flex-row justify-content-center align-items-center">
+          <h3 className="me-lg-5">Movie Search App</h3>
+          <form className="d-flex flex-row justify-content-center align-items-center w-50">
             <input
               type="text"
               className="form-control m-2 mr-sm-2"
@@ -53,14 +58,14 @@ const Home = () => {
       </Row>
       {data?.length ? (
         <>
-          <Row>
+          <Row className="moviesWrapper">
             <Col className="allItems" sm={focusedMovie ? 6 : 12}>
               <Row className="left">
                 {data?.map((item) =>
                   item.poster_path !== null ? (
                     <Col
                       key={item.imdbID}
-                      sm={4}
+                      sm={3}
                       onClick={() => {
                         setFocusedMovieID(item.id);
                         window.scrollTo(0, 0);
@@ -81,19 +86,18 @@ const Home = () => {
                 )}
               </Row>
             </Col>
-            {focusedMovie ? (
+            {focusedMovie && (
               <Col className="p-3 singleMovie">
                 <Row>
                   <SingleItem movie={focusedMovie}></SingleItem>
                 </Row>
               </Col>
-            ) : null}
+            )}
           </Row>
         </>
       ) : (
         <>
-          <h1 className="text-center mt-5">Welcome to movie database !</h1>
-          <h3 className="text-center">Please enter search terms !</h3>
+          <h3 className="text-center mt-5">Please enter search terms !</h3>
         </>
       )}
     </Container>

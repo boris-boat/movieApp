@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: center;
   height: 85vh;
-  transition: 0.5s all;
+  transition: 0.5s ease;
   position: relative;
 }
 .scoresWrapper {
@@ -20,4 +20,20 @@
   top: 0;
   right: 0;
   cursor: pointer;
+}
+.movie {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 1s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

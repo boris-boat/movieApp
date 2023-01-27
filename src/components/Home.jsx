@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useState, useEffect } from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -6,19 +6,26 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import { useSelector, useDispatch } from "react-redux";
-import { getMovies, getSingleMovie, resetMovies } from "../slices/moviesSlices";
+import {
+  getItems,
+  getSingleMovie,
+  resetFocusedMovie,
+  resetMovies,
+} from "../slices/moviesSlices";
+import Form from "react-bootstrap/Form";
 import "./Home.styles.css";
 import SingleItem from "./SingleItem";
 // c2e8864a
 const Home = () => {
   const dispatch = useDispatch();
   const [focusedMovieID, setFocusedMovieID] = useState(null);
+  const [searchString, setSearchString] = useState("");
+  const [type, setType] = useState("movie");
   const data = useSelector((state) => state.movies);
   const focusedMovie = useSelector((state) => state.focusedMovie);
-  const [searchString, setSearchString] = useState("");
-
+  const searchInput = useRef();
   useEffect(() => {
-    dispatch(getSingleMovie(focusedMovieID));
+    dispatch(getSingleMovie({ type, id: focusedMovieID }));
     // eslint-disable-next-line
   }, [focusedMovieID]);
 
@@ -32,22 +39,37 @@ const Home = () => {
         >
           {" "}
           <h3 className="me-lg-5">Movie Search App</h3>
+          <Form.Select
+            style={{ width: "150px" }}
+            onChange={(e) => {
+              dispatch(resetFocusedMovie());
+              dispatch(resetMovies());
+              setType(e.target.value);
+              searchInput.current.value = "";
+            }}
+          >
+            <option value="movie">Movies</option>
+            <option value="tv">TV shows</option>
+          </Form.Select>
           <form className="d-flex flex-row justify-content-center align-items-center w-50">
             <input
               type="text"
-              className="form-control m-2 mr-sm-2"
-              placeholder="Search for a movie"
+              className="form-control m-2 me-sm-2"
+              placeholder={
+                type === "tv" ? "Search for a tv show" : "Search for a movie"
+              }
+              ref={searchInput}
               onChange={(e) => {
                 if (e.target.value.length >= 3) setSearchString(e.target.value);
                 if (e.target.value.length === 0) dispatch(resetMovies());
               }}
             />
             <Button
-              variant="info"
+              variant="outline-info"
               style={{ height: "80%" }}
               onClick={(e) => {
                 e.preventDefault();
-                dispatch(getMovies(searchString));
+                dispatch(getItems({ type, query: searchString }));
               }}
               type="submit"
             >
@@ -71,7 +93,7 @@ const Home = () => {
                         window.scrollTo(0, 0);
                       }}
                     >
-                      <Card className="p-4 m-3 singleItem d-flex ">
+                      <Card className="p-4 m-3 singleItem">
                         <img
                           src={
                             `https://image.tmdb.org/t/p/original` +
@@ -79,7 +101,10 @@ const Home = () => {
                           }
                           alt="img"
                         />
-                        <h5 className="text-center mt-2"> {item.title}</h5>
+                        <h5 className="text-center mt-2">
+                          {" "}
+                          {type === "movie" ? item.title : item.name}
+                        </h5>
                       </Card>
                     </Col>
                   ) : null

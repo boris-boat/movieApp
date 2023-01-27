@@ -9,6 +9,7 @@ const SingleItem = (props) => {
 
   const [movie, setMovie] = useState(null);
   useEffect(() => {
+    console.log(props.movie);
     setMovie(props.movie);
     // eslint-disable-next-line
   }, [props.movie]);
@@ -28,7 +29,10 @@ const SingleItem = (props) => {
             alt=""
           />
           <h1 className="text-center">{movie?.title}</h1>
-          <h4 className="text-center">Released : {movie?.release_date}</h4>
+          <h4 className="text-center">
+            Released :{" "}
+            {movie?.release_date ? movie.release_date : movie.first_air_date}
+          </h4>
           <h4 className="text-center">{movie?.overview?.substring(0, 400)}</h4>
           <div className="scoresWrapper">
             <h5>Rating : {movie?.vote_average}</h5>

@@ -1,11 +1,15 @@
 .allItems {
-  transition: 0.5s linear;
+  transition: 0.3s linear;
 }
 .left {
   height: 85vh;
   overflow: auto;
 }
-
+.singleItem {
+  min-height: 350px;
+  display: flex;
+  justify-content: space-around;
+}
 @media screen and (max-width: 580px) {
   .moviesWrapper {
     display: flex;

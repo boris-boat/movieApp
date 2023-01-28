@@ -52,7 +52,10 @@ const Home = () => {
           className="d-flex justify-content-center align-items-center flex-row headerWrapper"
         >
           {" "}
-          <div className="titleWrapper">
+          <div
+            className="titleWrapper d-flex justify-content-start align-items-start
+          "
+          >
             <h3
               className="me-lg-5 user-select-none title m-0"
               onClick={() => {
@@ -62,7 +65,7 @@ const Home = () => {
               Movie Search App
             </h3>
           </div>
-          <div className="formWrapper">
+          <div className="formWrapper  d-flex  justify-content-center align-items-center">
             <Form.Select
               className="categoryPicker"
               onChange={(e) => {

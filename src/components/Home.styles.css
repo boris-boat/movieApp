@@ -3,6 +3,7 @@
 }
 .header {
   background-color: rgb(105, 105, 105);
+  height: 10vh;
 }
 .left {
   height: 94vh;
@@ -10,6 +11,9 @@
 }
 .categoryPicker {
   width: 120px;
+}
+.formWrapper {
+  width: 70%;
 }
 .singleItem {
   min-height: 350px;
@@ -43,6 +47,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
   }
   .moviesWrapper {
     display: flex;

@@ -15,82 +15,136 @@ import {
 import Form from "react-bootstrap/Form";
 import "./Home.styles.css";
 import SingleItem from "./SingleItem";
+import Serbia from "../assets/serbia.png";
+import USA from "../assets/united-states-of-america.png";
 // c2e8864a
 const Home = () => {
   const dispatch = useDispatch();
   const [focusedMovieID, setFocusedMovieID] = useState(null);
   const [searchString, setSearchString] = useState("");
   const [type, setType] = useState("movie");
+  const [lang, setLang] = useState("us");
   const data = useSelector((state) => state.movies);
   const focusedMovie = useSelector((state) => state.focusedMovie);
   const searchInput = useRef();
+  const reset = () => {
+    dispatch(resetFocusedMovie());
+    dispatch(resetMovies());
+    setSearchString("");
+    searchInput.current.value = "";
+  };
   useEffect(() => {
-    if (focusedMovieID) dispatch(getSingleMovie({ type, id: focusedMovieID }));
+    if (focusedMovieID)
+      dispatch(getSingleMovie({ type, id: focusedMovieID, lang }));
     // eslint-disable-next-line
-  }, [focusedMovieID]);
+  }, [focusedMovieID, lang]);
+  useEffect(() => {
+    if (searchString) dispatch(getItems({ type, query: searchString, lang }));
+    // eslint-disable-next-line
+  }, [lang]);
 
   return (
     <Container fluid>
-      <Row className="d-flex justify-content-center align-items-center flex-row  header">
+      <Row className="d-flex justify-content-center align-items-center flex-row header">
         <Col
           lg="10"
           xs="12"
-          className="d-flex justify-content-center align-items-center flex-row"
+          className="d-flex justify-content-center align-items-center flex-row headerWrapper"
         >
           {" "}
-          <h3 className="titleSmall">MSA</h3>
-          <h3
-            className="me-lg-5 user-select-none title m-0"
-            onClick={() => {
-              dispatch(resetFocusedMovie());
-              dispatch(resetMovies());
-              searchInput.current.value = "";
-            }}
-          >
-            Movie Search App
-          </h3>
-          <Form.Select
-            style={{ width: "120px" }}
-            onChange={(e) => {
-              dispatch(resetFocusedMovie());
-              dispatch(resetMovies());
-              setType(e.target.value);
-              searchInput.current.value = "";
-            }}
-          >
-            <option value="movie">Movies</option>
-            <option value="tv">TV shows</option>
-          </Form.Select>
-          <form className="d-flex flex-row justify-content-center align-items-center w-50">
-            <input
-              type="text"
-              className="form-control m-2 me-sm-2"
-              placeholder={
-                type === "tv" ? "Search for a tv show" : "Search for a movie"
-              }
-              ref={searchInput}
-              onChange={(e) => {
-                if (e.target.value.length >= 3) setSearchString(e.target.value);
-                if (e.target.value.length === 0) {
-                  searchInput.current.value = "";
-
-                  dispatch(resetMovies());
-                }
+          <div className="titleWrapper">
+            <h3
+              className="me-lg-5 user-select-none title m-0"
+              onClick={() => {
+                reset();
               }}
-            />
-            <Button
-              disabled={searchString.length <= 3}
-              variant="outline-info"
-              style={{ height: "80%" }}
-              onClick={(e) => {
-                e.preventDefault();
-                dispatch(getItems({ type, query: searchString }));
-              }}
-              type="submit"
             >
-              Search
-            </Button>{" "}
-          </form>
+              Movie Search App
+            </h3>
+          </div>
+          <div className="formWrapper">
+            <Form.Select
+              className="categoryPicker"
+              onChange={(e) => {
+                reset();
+                setType(e.target.value);
+              }}
+            >
+              <option value="movie">Movies</option>
+              <option value="tv">TV shows</option>
+            </Form.Select>
+            <form className="d-flex flex-row justify-content-center align-items-center w-50">
+              <input
+                type="text"
+                className="form-control m-2 me-sm-2"
+                placeholder={
+                  type === "tv" ? "Search for a tv show" : "Search for a movie"
+                }
+                ref={searchInput}
+                onChange={(e) => {
+                  if (e.target.value.length >= 3)
+                    setSearchString(e.target.value);
+                  if (e.target.value.length === 0) {
+                    setSearchString("");
+                    searchInput.current.value = "";
+                    dispatch(resetMovies());
+                  }
+                }}
+              />
+              <Button
+                variant="outline-info"
+                style={{ height: "80%" }}
+                onClick={(e) => {
+                  if (searchString.length <= 3) {
+                    alert("Please enter 3 or more characters");
+                    e.preventDefault();
+                    return;
+                  } else {
+                    e.preventDefault();
+                    dispatch(getItems({ type, query: searchString, lang }));
+                  }
+                }}
+                type="submit"
+              >
+                Search
+              </Button>{" "}
+            </form>
+            <button
+              style={{
+                height: "40px",
+                background: "none",
+                border: "none",
+                borderRadius: "50%",
+                marginLeft: "2px",
+              }}
+              className={lang === "us" ? "active" : " "}
+              onClick={() => setLang("us")}
+            >
+              <img
+                src={USA}
+                alt=""
+                className="icon"
+                style={{ height: "70%" }}
+              />
+            </button>
+            <button
+              style={{
+                height: "40px",
+                background: "none",
+                border: "none",
+                borderRadius: "50%",
+              }}
+              className={lang === "sr" ? "active" : " "}
+              onClick={() => setLang("sr")}
+            >
+              <img
+                src={Serbia}
+                alt=""
+                className="icon"
+                style={{ height: "30px" }}
+              />
+            </button>
+          </div>
         </Col>
       </Row>
       {data?.results?.length ? (
@@ -130,7 +184,7 @@ const Home = () => {
             {focusedMovie && (
               <Col className="p-3 singleMovie">
                 <Row>
-                  <SingleItem movie={focusedMovie}></SingleItem>
+                  <SingleItem movie={focusedMovie} reset={reset}></SingleItem>
                 </Row>
               </Col>
             )}

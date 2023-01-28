@@ -3,9 +3,3 @@
 * {
   font-family: Roboto, sans-serif;
 }
-.singleItem {
-  border-radius: 20px;
-}
-.singleItem:hover {
-  box-shadow: 0px 2px 22px 7px rgba(0, 0, 0, 0.5);
-}

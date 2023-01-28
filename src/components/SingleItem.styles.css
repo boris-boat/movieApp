@@ -37,3 +37,8 @@
     opacity: 1;
   }
 }
+@media screen and (max-width: 580px) {
+  .closeBtn {
+    margin: 0;
+  }
+}

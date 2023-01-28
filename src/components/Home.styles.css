@@ -1,19 +1,40 @@
 .allItems {
   transition: 0.3s linear;
 }
+.header {
+  background-color: rgb(105, 105, 105);
+}
 .left {
-  height: 85vh;
+  height: 94vh;
   overflow: auto;
 }
 .singleItem {
   min-height: 350px;
+  background-color: rgb(247, 247, 247);
   display: flex;
   justify-content: space-around;
+}
+.title {
+  cursor: pointer;
+  color: white;
+}
+.titleSmall {
+  display: none;
 }
 @media screen and (max-width: 580px) {
   .moviesWrapper {
     display: flex;
     flex-direction: column-reverse;
+  }
+  .titleSmall {
+    padding: 0;
+    margin: 0;
+    margin-right: 10px;
+    color: white;
+    display: block;
+  }
+  .title {
+    display: none;
   }
   .singleItemWrapper {
     height: auto !important;

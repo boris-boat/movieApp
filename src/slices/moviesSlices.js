@@ -11,11 +11,12 @@ export const getItems = createAsyncThunk("movies/getMovies", async (data) => {
 export const getSingleMovie = createAsyncThunk(
   "movies/getSingleMovie",
   async (data) => {
-    let { type, id } = data;
-    if (data)
+    if (data) {
+      let { type, id } = data;
       return fetch(
         `https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}`
       ).then((response) => response.json());
+    }
   }
 );
 
@@ -36,13 +37,14 @@ export const movieSlice = createSlice({
     },
     [getItems.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.movies = action.payload.results;
+      state.movies = action.payload;
     },
     [getItems.rejected]: (state) => {},
     [getSingleMovie.pending]: (state) => {
       state.isLoading = true;
     },
     [getSingleMovie.fulfilled]: (state, action) => {
+      console.log(action.payload);
       state.focusedMovie = action.payload;
     },
     [getSingleMovie.rejected]: (state) => {},

@@ -25,22 +25,32 @@ const Home = () => {
   const focusedMovie = useSelector((state) => state.focusedMovie);
   const searchInput = useRef();
   useEffect(() => {
-    dispatch(getSingleMovie({ type, id: focusedMovieID }));
+    if (focusedMovieID) dispatch(getSingleMovie({ type, id: focusedMovieID }));
     // eslint-disable-next-line
   }, [focusedMovieID]);
 
   return (
     <Container fluid>
-      <Row className="d-flex justify-content-center align-items-center flex-row mt-5">
+      <Row className="d-flex justify-content-center align-items-center flex-row  header">
         <Col
           lg="10"
           xs="12"
           className="d-flex justify-content-center align-items-center flex-row"
         >
           {" "}
-          <h3 className="me-lg-5">Movie Search App</h3>
+          <h3 className="titleSmall">MSA</h3>
+          <h3
+            className="me-lg-5 user-select-none title m-0"
+            onClick={() => {
+              dispatch(resetFocusedMovie());
+              dispatch(resetMovies());
+              searchInput.current.value = "";
+            }}
+          >
+            Movie Search App
+          </h3>
           <Form.Select
-            style={{ width: "150px" }}
+            style={{ width: "120px" }}
             onChange={(e) => {
               dispatch(resetFocusedMovie());
               dispatch(resetMovies());
@@ -61,10 +71,15 @@ const Home = () => {
               ref={searchInput}
               onChange={(e) => {
                 if (e.target.value.length >= 3) setSearchString(e.target.value);
-                if (e.target.value.length === 0) dispatch(resetMovies());
+                if (e.target.value.length === 0) {
+                  searchInput.current.value = "";
+
+                  dispatch(resetMovies());
+                }
               }}
             />
             <Button
+              disabled={searchString.length <= 3}
               variant="outline-info"
               style={{ height: "80%" }}
               onClick={(e) => {
@@ -78,15 +93,15 @@ const Home = () => {
           </form>
         </Col>
       </Row>
-      {data?.length ? (
+      {data?.results?.length ? (
         <>
           <Row className="moviesWrapper">
             <Col className="allItems" sm={focusedMovie ? 6 : 12}>
               <Row className="left">
-                {data?.map((item) =>
+                {data?.results?.map((item, index) =>
                   item.poster_path !== null ? (
                     <Col
-                      key={item.imdbID}
+                      key={index}
                       sm={3}
                       onClick={() => {
                         setFocusedMovieID(item.id);
@@ -100,6 +115,7 @@ const Home = () => {
                             item.poster_path
                           }
                           alt="img"
+                          style={{ maxHeight: "500px" }}
                         />
                         <h5 className="text-center mt-2">
                           {" "}
@@ -121,9 +137,17 @@ const Home = () => {
           </Row>
         </>
       ) : (
-        <>
-          <h3 className="text-center mt-5">Please enter search terms !</h3>
-        </>
+        <div className="noResults">
+          {data?.total_results === 0 ? (
+            <h3 className="text-center mt-5 user-select-none">
+              No matches found !
+            </h3>
+          ) : (
+            <h3 className="text-center mt-5 user-select-none">
+              Please enter search terms !
+            </h3>
+          )}
+        </div>
       )}
     </Container>
   );

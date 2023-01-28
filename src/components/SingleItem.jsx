@@ -9,7 +9,6 @@ const SingleItem = (props) => {
 
   const [movie, setMovie] = useState(null);
   useEffect(() => {
-    console.log(props.movie);
     setMovie(props.movie);
     // eslint-disable-next-line
   }, [props.movie]);
@@ -28,14 +27,24 @@ const SingleItem = (props) => {
             src={`https://image.tmdb.org/t/p/w300${movie?.poster_path}`}
             alt=""
           />
-          <h1 className="text-center">{movie?.title}</h1>
-          <h4 className="text-center">
+          <h1 className="text-center mt-2">{movie?.title}</h1>
+          <h4 className="text-center mt-2">
             Released :{" "}
-            {movie?.release_date ? movie.release_date : movie.first_air_date}
+            {movie?.release_date
+              ? new Date(movie.release_date).toLocaleDateString()
+              : new Date(movie.first_air_date).toLocaleDateString()}
           </h4>
-          <h4 className="text-center">{movie?.overview?.substring(0, 400)}</h4>
-          <div className="scoresWrapper">
-            <h5>Rating : {movie?.vote_average}</h5>
+          {movie.first_air_date ? (
+            <>
+              <h4>Number of season : {movie.number_of_seasons}</h4>
+              <h4>Still running : {String(movie.in_production)}</h4>
+            </>
+          ) : null}
+          <h4 className="text-center mt-2">
+            {movie?.overview?.substring(0, 400)}
+          </h4>
+          <div className="scoresWrapper mt-2">
+            <h5>Rating : {+movie?.vote_average.toFixed(1)}</h5>
           </div>
         </div>
       )}

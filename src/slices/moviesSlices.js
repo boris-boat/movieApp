@@ -13,17 +13,30 @@ export const getSingleMovie = createAsyncThunk(
   "movies/getSingleMovie",
   async (data) => {
     if (data) {
-      let { type, id } = data;
+      let { type, id, lang } = data;
       return fetch(
-        `https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}&language=${data.lang}`
+        `https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}&language=${lang}`
       ).then((response) => response.json());
     }
+  }
+);
+export const getTrending = createAsyncThunk(
+  "movies/getTrending",
+  async (type) => {
+    return fetch(
+      `https://api.themoviedb.org/3/trending/${type}/day?api_key=${API_KEY}`
+    ).then((response) => response.json());
   }
 );
 
 export const movieSlice = createSlice({
   name: "movies",
-  initialState: { movies: [], isLoading: false, focusedMovie: undefined },
+  initialState: {
+    movies: [],
+    isLoading: false,
+    focusedMovie: undefined,
+    trending: undefined,
+  },
   reducers: {
     resetMovies(state, action) {
       state.movies = [];
@@ -40,14 +53,25 @@ export const movieSlice = createSlice({
       state.isLoading = false;
       state.movies = action.payload;
     },
-    [getItems.rejected]: (state) => {},
+    [getItems.rejected]: (state) => {
+      console.log("error getting items");
+    },
     [getSingleMovie.pending]: (state) => {
       state.isLoading = true;
     },
     [getSingleMovie.fulfilled]: (state, action) => {
       state.focusedMovie = action.payload;
     },
-    [getSingleMovie.rejected]: (state) => {},
+    [getSingleMovie.rejected]: (state) => {
+      console.log("error getting single item");
+    },
+    [getTrending.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [getTrending.fulfilled]: (state, action) => {
+      state.trending = action.payload;
+    },
+    [getTrending.rejected]: (state) => {},
   },
 });
 export const { resetMovies, resetFocusedMovie } = movieSlice.actions;

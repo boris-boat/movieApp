@@ -6,13 +6,22 @@ import { resetFocusedMovie } from "../slices/moviesSlices";
 
 const SingleItem = (props) => {
   const dispatch = useDispatch();
-
   const [movie, setMovie] = useState(null);
+  let { lang } = props;
   useEffect(() => {
     setMovie(props.movie);
     // eslint-disable-next-line
   }, [props.movie]);
-
+  const stillRunningResponse = (data) => {
+    if (lang === "us") {
+      if (data === true) return "True";
+      if (data === false) return "Finished";
+    }
+    if (lang === "sr") {
+      if (data === true) return "Da";
+      if (data === false) return "Ne";
+    }
+  };
   return (
     <div className="singleItemWrapper" key={props.id}>
       {movie && (
@@ -21,6 +30,7 @@ const SingleItem = (props) => {
             className="closeBtn"
             onClick={() => {
               dispatch(resetFocusedMovie());
+              props.resetFocusedMovieID(null);
             }}
           />
           <img
@@ -29,22 +39,28 @@ const SingleItem = (props) => {
           />
           <h1 className="text-center mt-2">{movie?.title}</h1>
           <h4 className="text-center mt-2">
-            Released :{" "}
+            {lang === "us" ? "Released" : "Izdato"} :{" "}
             {movie?.release_date
               ? new Date(movie.release_date).toLocaleDateString()
               : new Date(movie.first_air_date).toLocaleDateString()}
           </h4>
           {movie.first_air_date ? (
             <>
-              <h4>Number of season : {movie.number_of_seasons}</h4>
-              <h4>Still running : {String(movie.in_production)}</h4>
+              <h4>
+                {lang === "us" ? "Number of seasons" : "Broj sezona"} :{" "}
+                {movie.number_of_seasons}
+              </h4>
+              <h4>
+                {lang === "us" ? "Still running" : "Aktuelna"} :{" "}
+                {stillRunningResponse(movie.in_production)}
+              </h4>
             </>
           ) : null}
           <h4 className="text-center mt-2">
             {movie?.overview?.substring(0, 400)}
           </h4>
           <div className="scoresWrapper mt-2">
-            <h5>Rating : {+movie?.vote_average.toFixed(1)}</h5>
+            <h5>Rating : {+movie?.vote_average?.toFixed(1)}</h5>
           </div>
         </div>
       )}

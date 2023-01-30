@@ -9,14 +9,16 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   getItems,
   getSingleMovie,
+  getTrending,
   resetFocusedMovie,
   resetMovies,
 } from "../slices/moviesSlices";
 import Form from "react-bootstrap/Form";
 import "./Home.styles.css";
-import SingleItem from "./SingleItem";
+import SingleItem from "../components/SingleItem";
 import Serbia from "../assets/serbia.png";
 import USA from "../assets/united-states-of-america.png";
+import Carousell from "../components/Carousell";
 // c2e8864a
 const Home = () => {
   const dispatch = useDispatch();
@@ -25,19 +27,23 @@ const Home = () => {
   const [type, setType] = useState("movie");
   const [lang, setLang] = useState("us");
   const data = useSelector((state) => state.movies);
+  const trending = useSelector((state) => state.trending);
   const focusedMovie = useSelector((state) => state.focusedMovie);
   const searchInput = useRef();
   const reset = () => {
+    setFocusedMovieID(null);
     dispatch(resetFocusedMovie());
     dispatch(resetMovies());
     setSearchString("");
     searchInput.current.value = "";
   };
   useEffect(() => {
-    if (focusedMovieID)
+    dispatch(getTrending(type));
+    if (focusedMovieID) {
       dispatch(getSingleMovie({ type, id: focusedMovieID, lang }));
+    }
     // eslint-disable-next-line
-  }, [focusedMovieID, lang]);
+  }, [focusedMovieID, lang, type]);
   useEffect(() => {
     if (searchString) dispatch(getItems({ type, query: searchString, lang }));
     // eslint-disable-next-line
@@ -73,16 +79,18 @@ const Home = () => {
                 setType(e.target.value);
               }}
             >
-              <option value="movie">Movies</option>
-              <option value="tv">TV shows</option>
+              <option value="movie">
+                {lang === "us" ? "Movies" : "Filmovi"}
+              </option>
+              <option value="tv">
+                {lang === "us" ? "Tv Shows" : "Serije"}
+              </option>
             </Form.Select>
             <form className="d-flex flex-row justify-content-center align-items-center w-50">
               <input
                 type="text"
                 className="form-control m-2 me-sm-2"
-                placeholder={
-                  type === "tv" ? "Search for a tv show" : "Search for a movie"
-                }
+                placeholder={lang === "us" ? "Search" : "Pretrazi"}
                 ref={searchInput}
                 onChange={(e) => {
                   if (e.target.value.length >= 3)
@@ -97,6 +105,7 @@ const Home = () => {
               <Button
                 variant="outline-info"
                 style={{ height: "80%" }}
+                className="m-lg-3"
                 onClick={(e) => {
                   if (searchString.length <= 3) {
                     alert("Please enter 3 or more characters");
@@ -104,6 +113,8 @@ const Home = () => {
                     return;
                   } else {
                     e.preventDefault();
+                    setFocusedMovieID(null);
+                    dispatch(resetFocusedMovie());
                     dispatch(getItems({ type, query: searchString, lang }));
                   }
                 }}
@@ -187,22 +198,59 @@ const Home = () => {
             {focusedMovie && (
               <Col className="p-3 singleMovie">
                 <Row>
-                  <SingleItem movie={focusedMovie} reset={reset}></SingleItem>
+                  <SingleItem
+                    movie={focusedMovie}
+                    reset={reset}
+                    lang={lang}
+                    resetFocusedMovieID={setFocusedMovieID}
+                  ></SingleItem>
                 </Row>
               </Col>
             )}
           </Row>
         </>
       ) : (
-        <div className="noResults">
+        <div className="no-results" sm={0}>
           {data?.total_results === 0 ? (
-            <h3 className="text-center mt-5 user-select-none">
-              No matches found !
-            </h3>
+            <>
+              <h3 className="text-center mt-5 user-select-none errorText">
+                No matches found !
+              </h3>
+              {/* <Carousell
+                trending={trending}
+                setFocusedMovieID={setFocusedMovieID}
+              ></Carousell> */}
+            </>
           ) : (
-            <h3 className="text-center mt-5 user-select-none">
-              Please enter search terms !
-            </h3>
+            <Container fluid className="popular mt-3">
+              <Row className="d-flex justify-content-center align-items-center popular-wrapper">
+                {!focusedMovie ? (
+                  <Col sm={2}>
+                    <h1 className="text-center">Latest movies and tv shows</h1>
+                  </Col>
+                ) : null}
+                <Col
+                  style={{ height: "100%" }}
+                  className="carousell"
+                  sm={focusedMovie ? 6 : 8}
+                >
+                  <Carousell
+                    trending={trending}
+                    setFocusedMovieID={setFocusedMovieID}
+                  ></Carousell>
+                </Col>
+                {focusedMovie ? (
+                  <Col sm={6} className="focused-movie-home-page">
+                    <SingleItem
+                      resetFocusedMovieID={setFocusedMovieID}
+                      movie={focusedMovie}
+                      reset={reset}
+                      lang={lang}
+                    ></SingleItem>
+                  </Col>
+                ) : null}
+              </Row>
+            </Container>
           )}
         </div>
       )}

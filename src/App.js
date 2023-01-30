@@ -1,5 +1,5 @@
 import "./App.css";
-import Home from "./components/Home.jsx";
+import Home from "./pages/Home.jsx";
 import SingleItem from "./components/SingleItem";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";

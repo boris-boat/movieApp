@@ -1,0 +1,15 @@
+.wrapper {
+  transition: 0.3s linear;
+}
+.carousel-item {
+  height: 800px;
+}
+.carousel-item > img {
+  object-fit: contain;
+  height: 100%;
+}
+@media screen and (max-width: 580px) {
+  .carousel-item > img {
+    object-fit: cover;
+  }
+}

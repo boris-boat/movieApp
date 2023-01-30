@@ -1,5 +1,8 @@
-.allItems {
+.allItem {
   transition: 0.3s linear;
+}
+.carousell {
+  transition: 0.1s linear;
 }
 .header {
   background-color: rgb(105, 105, 105);
@@ -25,19 +28,37 @@
   cursor: pointer;
   color: white;
 }
+.errorText {
+  color: red;
+  animation: fadeIn 1s;
+}
 .titleSmall {
   display: none;
+}
+.popular {
+  height: 60vh;
 }
 .active {
   box-shadow: 0 0 0 1px rgb(255, 255, 255) !important;
 }
 @media screen and (max-width: 580px) {
   .header {
-    height: auto;
+    height: 20vh;
+  }
+  .focused-movie-home-page {
+    margin-top: 50px;
   }
   .headerWrapper {
     display: flex;
     flex-direction: column !important;
+    gap: 10px;
+  }
+  .popular-wrapper {
+    flex-direction: column-reverse !important;
+  }
+  .popular {
+    margin-top: 0 !important;
+    height: auto;
   }
   .categoryPicker {
     height: 80%;
@@ -58,9 +79,18 @@
     height: auto !important;
   }
   .singleMovie {
+    box-shadow: 0 0 0 1px rgb(255, 255, 255) !important;
     height: auto;
   }
   .singleMovie > .movie {
     height: auto;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }

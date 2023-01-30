@@ -12,13 +12,27 @@
   height: 94vh;
   overflow: auto;
 }
+.header-wrapper {
+  height: 100%;
+}
+
 .categoryPicker {
   width: 120px;
 }
 .formWrapper {
   width: 70%;
 }
-.singleItem {
+.title-wrapper {
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.logo-header {
+  transform: scale(2);
+  height: 100%;
+}
+.title .singleItem {
   min-height: 350px;
   background-color: rgb(247, 247, 247);
   display: flex;
@@ -48,7 +62,7 @@
   .focused-movie-home-page {
     margin-top: 50px;
   }
-  .headerWrapper {
+  .header-wrapper {
     display: flex;
     flex-direction: column !important;
     gap: 10px;
@@ -84,6 +98,9 @@
   }
   .singleMovie > .movie {
     height: auto;
+  }
+  .title-wrapper {
+    height: 50%;
   }
 }
 @keyframes fadeIn {

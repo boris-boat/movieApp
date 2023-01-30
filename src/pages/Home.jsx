@@ -16,6 +16,8 @@ import {
 import Form from "react-bootstrap/Form";
 import "./Home.styles.css";
 import SingleItem from "../components/SingleItem";
+import Logo from "../assets/logo.png";
+import LogoNoBackground from "../assets/logo-removebg-preview (1).png";
 import Serbia from "../assets/serbia.png";
 import USA from "../assets/united-states-of-america.png";
 import Carousell from "../components/Carousell";
@@ -55,21 +57,20 @@ const Home = () => {
         <Col
           lg="10"
           xs="12"
-          className="d-flex justify-content-center align-items-center flex-row headerWrapper"
+          className="d-flex justify-content-center align-items-center flex-row header-wrapper"
         >
           {" "}
           <div
-            className="titleWrapper d-flex justify-content-start align-items-start
+            className="title-wrapper 
           "
           >
-            <h3
-              className="me-lg-5 user-select-none title m-0"
-              onClick={() => {
-                reset();
-              }}
-            >
-              Movie Search App
-            </h3>
+            {" "}
+            <img
+              src={LogoNoBackground}
+              alt=""
+              className="logo-header mt-4 me-2"
+            />
+            <h3 style={{ color: "white" }}>Movie Search App</h3>
           </div>
           <div className="formWrapper  d-flex  justify-content-center align-items-center">
             <Form.Select
@@ -225,8 +226,20 @@ const Home = () => {
             <Container fluid className="popular mt-3">
               <Row className="d-flex justify-content-center align-items-center popular-wrapper">
                 {!focusedMovie ? (
-                  <Col sm={2}>
-                    <h1 className="text-center">Latest movies and tv shows</h1>
+                  <Col
+                    sm={3}
+                    className="d-flex justify-content-center align-items-center flex-column"
+                  >
+                    <img
+                      src={Logo}
+                      alt="logo"
+                      style={{ height: "250px", width: "250px" }}
+                    />
+                    <h1 className="text-center">
+                      {lang === "us"
+                        ? "Latest movies and TV shows"
+                        : "Aktuelni filmovi i TV serije"}
+                    </h1>
                   </Col>
                 ) : null}
                 <Col

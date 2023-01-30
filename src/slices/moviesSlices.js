@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const API_URL = "https://api.themoviedb.org/3/search";
-const API_KEY = "8c247ea0b4b56ed2ff7d41c9a833aa77";
+const API_KEY = process.env.REACT_APP_API_KEY;
 export const getItems = createAsyncThunk("movies/getMovies", async (data) => {
   let { type, query } = data;
   return fetch(
@@ -9,6 +9,18 @@ export const getItems = createAsyncThunk("movies/getMovies", async (data) => {
       `/${type}?api_key=${API_KEY}&query=${query}&language=${data.lang}&include_adult=false`
   ).then((res) => res.json());
 });
+export const getRecomended = createAsyncThunk(
+  "movies/getRecomended",
+  async () => {
+    return fetch(
+      `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=en-US&include_adult=false&include_video=false&page=${(
+        Math.random() * 11
+      ).toFixed(
+        0
+      )}&vote_count.gte=1000&vote_average.gte=8&with_watch_monetization_types=flatrate`
+    ).then((response) => response.json());
+  }
+);
 export const getSingleMovie = createAsyncThunk(
   "movies/getSingleMovie",
   async (data) => {
@@ -36,6 +48,7 @@ export const movieSlice = createSlice({
     isLoading: false,
     focusedMovie: undefined,
     trending: undefined,
+    recomendedMovie: undefined,
   },
   reducers: {
     resetMovies(state, action) {
@@ -54,6 +67,15 @@ export const movieSlice = createSlice({
       state.movies = action.payload;
     },
     [getItems.rejected]: (state) => {
+      console.log("error getting items");
+    },
+    [getRecomended.pending]: (state) => {},
+    [getRecomended.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.recomendedMovie =
+        action.payload?.results[(Math.random() * 20).toFixed(0)];
+    },
+    [getRecomended.rejected]: (state) => {
       console.log("error getting items");
     },
     [getSingleMovie.pending]: (state) => {

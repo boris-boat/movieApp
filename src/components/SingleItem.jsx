@@ -57,6 +57,7 @@ const SingleItem = (props) => {
             </>
           ) : null}
           <h4 className="text-center mt-2">
+            {movie.overview.length === 0 ? "Nema opisa." : null}
             {movie?.overview?.substring(0, 400)}
           </h4>
           <div className="scoresWrapper mt-2">

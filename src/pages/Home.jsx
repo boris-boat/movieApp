@@ -8,6 +8,7 @@ import Container from "react-bootstrap/Container";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getItems,
+  getRecomended,
   getSingleMovie,
   getTrending,
   resetFocusedMovie,
@@ -30,6 +31,7 @@ const Home = () => {
   const [lang, setLang] = useState("us");
   const data = useSelector((state) => state.movies);
   const trending = useSelector((state) => state.trending);
+  const recomendedMovie = useSelector((state) => state.recomendedMovie);
   const focusedMovie = useSelector((state) => state.focusedMovie);
   const searchInput = useRef();
   const reset = () => {
@@ -40,6 +42,7 @@ const Home = () => {
     searchInput.current.value = "";
   };
   useEffect(() => {
+    dispatch(getRecomended());
     dispatch(getTrending(type));
     if (focusedMovieID) {
       dispatch(getSingleMovie({ type, id: focusedMovieID, lang }));
@@ -69,8 +72,18 @@ const Home = () => {
               src={LogoNoBackground}
               alt=""
               className="logo-header mt-4 me-2"
+              onClick={() => {
+                reset();
+              }}
             />
-            <h3 style={{ color: "white" }}>Movie Search App</h3>
+            <h3
+              style={{ color: "white", cursor: "pointer", margin: "0" }}
+              onClick={() => {
+                reset();
+              }}
+            >
+              Movie Search App
+            </h3>
           </div>
           <div className="formWrapper  d-flex  justify-content-center align-items-center">
             <Form.Select
@@ -215,7 +228,9 @@ const Home = () => {
           {data?.total_results === 0 ? (
             <>
               <h3 className="text-center mt-5 user-select-none errorText">
-                No matches found !
+                {lang === "us"
+                  ? "No matches found ! Try again"
+                  : "Nema rezultata , pokusajte ponovo"}
               </h3>
               {/* <Carousell
                 trending={trending}

@@ -29,10 +29,11 @@
   align-items: center;
 }
 .logo-header {
-  transform: scale(2);
-  height: 100%;
+  transform: scale(1.9);
+  height: 90%;
+  cursor: pointer;
 }
-.title .singleItem {
+.singleItem {
   min-height: 350px;
   background-color: rgb(247, 247, 247);
   display: flex;

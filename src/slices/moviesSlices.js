@@ -64,7 +64,9 @@ export const movieSlice = createSlice({
     },
   },
   extraReducers: {
-    [getItems.pending]: (state) => {},
+    [getItems.pending]: (state) => {
+      state.isLoading = true;
+    },
     [getItems.fulfilled]: (state, action) => {
       state.movies = action.payload;
     },

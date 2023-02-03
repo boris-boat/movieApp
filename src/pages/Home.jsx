@@ -13,6 +13,7 @@ import {
   getTrending,
   resetFocusedMovie,
   resetMovies,
+  setLoading,
 } from "../slices/moviesSlices";
 import Form from "react-bootstrap/Form";
 import "./Home.styles.css";
@@ -23,7 +24,7 @@ import Serbia from "../assets/serbia.png";
 import USA from "../assets/united-states-of-america.png";
 import Carousell from "../components/Carousell";
 import MovieRecommend from "../components/MovieRecommend";
-import Loader from "../components/Loader";
+// import Loader from "../components/Loader";
 // c2e8864a
 const Home = () => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const Home = () => {
   const trending = useSelector((state) => state.trending);
   const recomendedMovie = useSelector((state) => state.recomendedMovie);
   const focusedMovie = useSelector((state) => state.focusedMovie);
-  const isLoading = useSelector((state) => state.isLoading);
+  // const isLoading = useSelector((state) => state.isLoading);
   const searchInput = useRef();
   const reset = () => {
     setFocusedMovieID(null);
@@ -48,6 +49,10 @@ const Home = () => {
   useEffect(() => {
     dispatch(getRecomended(lang));
     dispatch(getTrending(type));
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
     if (focusedMovieID) {
       dispatch(getSingleMovie({ type, id: focusedMovieID, lang }));
     }
@@ -153,11 +158,14 @@ const Home = () => {
                     setFocusedMovieID(null);
                     dispatch(resetFocusedMovie());
                     dispatch(getItems({ type, query: searchString, lang }));
+                    setTimeout(() => {
+                      dispatch(setLoading(false));
+                    }, 500);
                   }
                 }}
                 type="submit"
               >
-                Search
+                {lang === "us" ? "Search" : "Pretrazi"}
               </Button>{" "}
             </form>
             <button
@@ -200,55 +208,51 @@ const Home = () => {
       </Row>
       {data?.results?.length ? (
         <>
-          {isLoading ? (
-            <Loader></Loader>
-          ) : (
-            <Row className="moviesWrapper">
-              <Col className="allItems" sm={focusedMovie ? 6 : 12}>
-                <Row className="left">
-                  {data?.results?.map((item, index) =>
-                    item.poster_path !== null ? (
-                      <Col
-                        key={index}
-                        sm={3}
-                        onClick={() => {
-                          setFocusedMovieID(item.id);
-                          window.scrollTo(0, 0);
-                        }}
-                      >
-                        <Card className="p-4 m-3 singleItem">
-                          <img
-                            src={
-                              `https://image.tmdb.org/t/p/original` +
-                              item.poster_path
-                            }
-                            alt="img"
-                            style={{ maxHeight: "500px" }}
-                          />
-                          <h5 className="text-center mt-2">
-                            {" "}
-                            {type === "movie" ? item.title : item.name}
-                          </h5>
-                        </Card>
-                      </Col>
-                    ) : null
-                  )}
+          <Row className="moviesWrapper">
+            <Col className="allItems" sm={focusedMovie ? 6 : 12}>
+              <Row className="left">
+                {data?.results?.map((item, index) =>
+                  item.poster_path !== null ? (
+                    <Col
+                      key={index}
+                      sm={3}
+                      onClick={() => {
+                        setFocusedMovieID(item.id);
+                        window.scrollTo(0, 0);
+                      }}
+                    >
+                      <Card className="p-4 m-3 singleItem">
+                        <img
+                          src={
+                            `https://image.tmdb.org/t/p/original` +
+                            item.poster_path
+                          }
+                          alt="img"
+                          style={{ maxHeight: "500px" }}
+                        />
+                        <h5 className="text-center mt-2">
+                          {" "}
+                          {type === "movie" ? item.title : item.name}
+                        </h5>
+                      </Card>
+                    </Col>
+                  ) : null
+                )}
+              </Row>
+            </Col>
+            {focusedMovie && (
+              <Col className="p-3 singleMovie">
+                <Row>
+                  <SingleItem
+                    movie={focusedMovie}
+                    reset={reset}
+                    lang={lang}
+                    resetFocusedMovieID={setFocusedMovieID}
+                  ></SingleItem>
                 </Row>
               </Col>
-              {focusedMovie && (
-                <Col className="p-3 singleMovie">
-                  <Row>
-                    <SingleItem
-                      movie={focusedMovie}
-                      reset={reset}
-                      lang={lang}
-                      resetFocusedMovieID={setFocusedMovieID}
-                    ></SingleItem>
-                  </Row>
-                </Col>
-              )}
-            </Row>
-          )}
+            )}
+          </Row>
         </>
       ) : (
         <div className="no-results" sm={0}>

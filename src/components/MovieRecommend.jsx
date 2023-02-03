@@ -4,7 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import "./movieRecommend.styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getRecomended, setLoading } from "../slices/moviesSlices";
-import Loader from "../components/Loader";
+import Loader from "../shared/Loader";
 
 const MovieRecommend = (props) => {
   const dispatch = useDispatch();

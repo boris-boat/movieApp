@@ -1,7 +1,7 @@
 .allItem {
   transition: 0.3s linear;
 }
-.carousell {
+.carousel {
   transition: 0.1s linear;
 }
 .header {
@@ -29,9 +29,11 @@
   align-items: center;
 }
 .logo-header {
-  transform: scale(1.9);
-  height: 90%;
+  transform: scale(0.8);
   cursor: pointer;
+}
+.recommend-btn-sm {
+  display: none;
 }
 .singleItem {
   min-height: 350px;
@@ -58,7 +60,7 @@
 }
 @media screen and (max-width: 580px) {
   .header {
-    height: 20vh;
+    min-height: 25vh;
   }
   .focused-movie-home-page {
     margin-top: 50px;
@@ -66,7 +68,6 @@
   .header-wrapper {
     display: flex;
     flex-direction: column !important;
-    gap: 10px;
   }
   .popular-wrapper {
     flex-direction: column-reverse !important;
@@ -76,8 +77,11 @@
     height: auto;
   }
   .categoryPicker {
-    height: 80%;
+    height: 70%;
     width: 100px;
+  }
+  .recommend-btn-lg {
+    display: none;
   }
   .formWrapper {
     display: flex;
@@ -89,7 +93,9 @@
     display: flex;
     flex-direction: column-reverse;
   }
-
+  .recommend-btn-sm {
+    display: block;
+  }
   .singleItemWrapper {
     height: auto !important;
   }

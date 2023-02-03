@@ -11,10 +11,12 @@ export const getItems = createAsyncThunk("movies/getMovies", async (data) => {
 });
 export const getRecomended = createAsyncThunk(
   "movies/getRecomended",
-  async () => {
+  async (lang) => {
+    if (lang === "us") lang = "en";
     return fetch(
-      `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=en-US&include_adult=false&include_video=false&page=${(
-        Math.random() * 11
+      `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=${lang}&include_adult=false&include_video=false&page=${(
+        Math.random() * 10 +
+        1
       ).toFixed(
         0
       )}&vote_count.gte=1000&vote_average.gte=8&with_watch_monetization_types=flatrate`
@@ -54,16 +56,16 @@ export const movieSlice = createSlice({
     resetMovies(state, action) {
       state.movies = [];
     },
+    setLoading(state, action) {
+      state.isLoading = action.payload;
+    },
     resetFocusedMovie(state, action) {
       state.focusedMovie = undefined;
     },
   },
   extraReducers: {
-    [getItems.pending]: (state) => {
-      state.isLoading = true;
-    },
+    [getItems.pending]: (state) => {},
     [getItems.fulfilled]: (state, action) => {
-      state.isLoading = false;
       state.movies = action.payload;
     },
     [getItems.rejected]: (state) => {
@@ -71,29 +73,35 @@ export const movieSlice = createSlice({
     },
     [getRecomended.pending]: (state) => {},
     [getRecomended.fulfilled]: (state, action) => {
-      state.isLoading = false;
-      state.recomendedMovie =
-        action.payload?.results[(Math.random() * 20).toFixed(0)];
+      let index = (Math.random() * action.payload.results.length).toFixed(0);
+      // eslint-disable-next-line
+      if (index == action.payload.results.length) index = index - 1;
+      state.recomendedMovie = action.payload?.results[index];
     },
-    [getRecomended.rejected]: (state) => {
-      console.log("error getting items");
+    [getRecomended.rejected]: (state, action) => {
+      console.error(action.error);
     },
     [getSingleMovie.pending]: (state) => {
       state.isLoading = true;
     },
     [getSingleMovie.fulfilled]: (state, action) => {
+      state.isLoading = false;
       state.focusedMovie = action.payload;
     },
-    [getSingleMovie.rejected]: (state) => {
-      console.log("error getting single item");
+    [getSingleMovie.rejected]: (state, action) => {
+      console.error(action.error);
     },
     [getTrending.pending]: (state) => {
       state.isLoading = true;
     },
     [getTrending.fulfilled]: (state, action) => {
+      state.isLoading = false;
       state.trending = action.payload;
     },
-    [getTrending.rejected]: (state) => {},
+    [getTrending.rejected]: (state, action) => {
+      console.error(action.error);
+    },
   },
 });
-export const { resetMovies, resetFocusedMovie } = movieSlice.actions;
+export const { resetMovies, resetFocusedMovie, setLoading } =
+  movieSlice.actions;

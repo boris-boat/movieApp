@@ -18,10 +18,12 @@ import Form from "react-bootstrap/Form";
 import "./Home.styles.css";
 import SingleItem from "../components/SingleItem";
 import Logo from "../assets/logo.png";
-import LogoNoBackground from "../assets/logo-removebg-preview (1).png";
+import LogoNoBackground from "../assets/logo-removebg-preview (2).png";
 import Serbia from "../assets/serbia.png";
 import USA from "../assets/united-states-of-america.png";
 import Carousell from "../components/Carousell";
+import MovieRecommend from "../components/MovieRecommend";
+import Loader from "../components/Loader";
 // c2e8864a
 const Home = () => {
   const dispatch = useDispatch();
@@ -29,10 +31,12 @@ const Home = () => {
   const [searchString, setSearchString] = useState("");
   const [type, setType] = useState("movie");
   const [lang, setLang] = useState("us");
+  const [showModal, setShowModal] = useState(false);
   const data = useSelector((state) => state.movies);
   const trending = useSelector((state) => state.trending);
   const recomendedMovie = useSelector((state) => state.recomendedMovie);
   const focusedMovie = useSelector((state) => state.focusedMovie);
+  const isLoading = useSelector((state) => state.isLoading);
   const searchInput = useRef();
   const reset = () => {
     setFocusedMovieID(null);
@@ -42,7 +46,7 @@ const Home = () => {
     searchInput.current.value = "";
   };
   useEffect(() => {
-    dispatch(getRecomended());
+    dispatch(getRecomended(lang));
     dispatch(getTrending(type));
     if (focusedMovieID) {
       dispatch(getSingleMovie({ type, id: focusedMovieID, lang }));
@@ -71,7 +75,7 @@ const Home = () => {
             <img
               src={LogoNoBackground}
               alt=""
-              className="logo-header mt-4 me-2"
+              className="logo-header"
               onClick={() => {
                 reset();
               }}
@@ -85,7 +89,26 @@ const Home = () => {
               Movie Search App
             </h3>
           </div>
-          <div className="formWrapper  d-flex  justify-content-center align-items-center">
+          {type === "movie" ? (
+            <Button
+              variant="outline-info"
+              onClick={() => setShowModal(true)}
+              className="recommend-btn-sm"
+            >
+              {lang === "us" ? "Recommend" : "Preporuci"}
+            </Button>
+          ) : null}
+          <div className="formWrapper d-flex justify-content-center align-items-center">
+            {type === "movie" ? (
+              <Button
+                variant="outline-info"
+                onClick={() => setShowModal(true)}
+                className="me-3 recommend-btn-lg"
+              >
+                {lang === "us" ? "Recommend" : "Preporuci"}
+              </Button>
+            ) : null}
+
             <Form.Select
               className="categoryPicker"
               onChange={(e) => {
@@ -177,51 +200,55 @@ const Home = () => {
       </Row>
       {data?.results?.length ? (
         <>
-          <Row className="moviesWrapper">
-            <Col className="allItems" sm={focusedMovie ? 6 : 12}>
-              <Row className="left">
-                {data?.results?.map((item, index) =>
-                  item.poster_path !== null ? (
-                    <Col
-                      key={index}
-                      sm={3}
-                      onClick={() => {
-                        setFocusedMovieID(item.id);
-                        window.scrollTo(0, 0);
-                      }}
-                    >
-                      <Card className="p-4 m-3 singleItem">
-                        <img
-                          src={
-                            `https://image.tmdb.org/t/p/original` +
-                            item.poster_path
-                          }
-                          alt="img"
-                          style={{ maxHeight: "500px" }}
-                        />
-                        <h5 className="text-center mt-2">
-                          {" "}
-                          {type === "movie" ? item.title : item.name}
-                        </h5>
-                      </Card>
-                    </Col>
-                  ) : null
-                )}
-              </Row>
-            </Col>
-            {focusedMovie && (
-              <Col className="p-3 singleMovie">
-                <Row>
-                  <SingleItem
-                    movie={focusedMovie}
-                    reset={reset}
-                    lang={lang}
-                    resetFocusedMovieID={setFocusedMovieID}
-                  ></SingleItem>
+          {isLoading ? (
+            <Loader></Loader>
+          ) : (
+            <Row className="moviesWrapper">
+              <Col className="allItems" sm={focusedMovie ? 6 : 12}>
+                <Row className="left">
+                  {data?.results?.map((item, index) =>
+                    item.poster_path !== null ? (
+                      <Col
+                        key={index}
+                        sm={3}
+                        onClick={() => {
+                          setFocusedMovieID(item.id);
+                          window.scrollTo(0, 0);
+                        }}
+                      >
+                        <Card className="p-4 m-3 singleItem">
+                          <img
+                            src={
+                              `https://image.tmdb.org/t/p/original` +
+                              item.poster_path
+                            }
+                            alt="img"
+                            style={{ maxHeight: "500px" }}
+                          />
+                          <h5 className="text-center mt-2">
+                            {" "}
+                            {type === "movie" ? item.title : item.name}
+                          </h5>
+                        </Card>
+                      </Col>
+                    ) : null
+                  )}
                 </Row>
               </Col>
-            )}
-          </Row>
+              {focusedMovie && (
+                <Col className="p-3 singleMovie">
+                  <Row>
+                    <SingleItem
+                      movie={focusedMovie}
+                      reset={reset}
+                      lang={lang}
+                      resetFocusedMovieID={setFocusedMovieID}
+                    ></SingleItem>
+                  </Row>
+                </Col>
+              )}
+            </Row>
+          )}
         </>
       ) : (
         <div className="no-results" sm={0}>
@@ -258,8 +285,8 @@ const Home = () => {
                   </Col>
                 ) : null}
                 <Col
-                  style={{ height: "100%" }}
-                  className="carousell"
+                  // style={{ height: "100%" }}
+                  className="carousel"
                   sm={focusedMovie ? 6 : 8}
                 >
                   <Carousell
@@ -282,6 +309,12 @@ const Home = () => {
           )}
         </div>
       )}
+      <MovieRecommend
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        movie={recomendedMovie}
+        lang={lang}
+      ></MovieRecommend>
     </Container>
   );
 };

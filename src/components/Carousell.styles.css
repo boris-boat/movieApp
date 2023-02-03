@@ -2,7 +2,7 @@
   transition: 0.3s linear;
 }
 .carousel-item {
-  height: 800px;
+  height: 750px;
 }
 .carousel-item > img {
   object-fit: contain;
